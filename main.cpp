@@ -55,16 +55,25 @@ char map[15][25]{
 std::mutex playerMutex;
 
 void ending(){
-    std::cout << "\033[33m"; // ANSI escape code for yellow color
+    std::cout << "\033[33m";
     std::cout <<
         "     .aMMMMP .aMMMb  dMMMMMMMMb dMMMMMP        .aMMMb  dMP dMP dMMMMMP dMMMMb \n"
         "    dMP\"    dMP\"dMP dMP\"dMP\"dMPdMP            dMP\"dMP dMP dMP dMP     dMP.dMP \n"
         "   dMP MMP\"dMMMMMP dMP dMP dMPdMMMP          dMP dMP dMP dMP dMMMP   dMMMMK\"  \n"
         "  dMP.dMP dMP dMP dMP dMP dMPdMP            dMP.aMP  YMvAP\" dMP     dMP\"AMF   \n"
         "  VMMMP\" dMP dMP dMP dMP dMPdMMMMMP         VMMMP\"    VP\"  dMMMMMP dMP dMP    \n";
-    std::cout << "\033[0m"; // Reset color
+    std::cout << "\033[0m";
 }
-
+void start(){
+    std::cout << "\033[33m";
+    std::cout <<
+        "    ____                         ______         _____ __                  __ \n"
+        "   / __ \\________  __________   /_  __/___     / ___// /__________ ______/ /_\n"
+        "  / /_/ / ___/ _ \\/ ___/ ___/    / / / __ \\    \\__ \\/ __/ ___/ __ `/ ___/ __/\n"
+        " / ____/ /  /  __(__  |__  )    / / / /_/ /   ___/ / /_/ /  / /_/ / /  / /_  \n"
+        "/_/   /_/   \\___/____/____/    /_/  \\____/   /____/\\__/_/   \\__,_/_/   \\__/  \n";
+    std::cout << "\033[0m";
+}
 void findXPosition() {
     for (int i = 0; i < arsizex; i++) {
         for (int j = 0; j < 2 * arsizey; j++) {
@@ -79,11 +88,6 @@ void findXPosition() {
 
 void render() {
     findXPosition();
-
-    if (gameover){
-            ending();
-        }
-    else {
         for (int i = 0; i < arsizex; i++) {
             for (int j = 0; j < arsizey - 5 + 5; j++) {
                 if (map[i][j] == playerCharacter || map[i][j] == pipechar){
@@ -105,7 +109,6 @@ void render() {
             }
         std::cout << std::endl;
         }
-    }
 }
 
 void jump() {
@@ -237,6 +240,9 @@ void pushThread() {
 int main() {
     srand(time(0));
 
+    start();
+    char key = getKeyPress();
+
     std::thread inputThreadObj(inputThread);
     std::thread gravityThreadObj(gravityThread);
     std::thread pushTgreadObj(pushThread);
@@ -246,7 +252,7 @@ int main() {
     pushTgreadObj.join();
 
     system("clear");
-    render();
+    ending();
 
     return 0;
 }
