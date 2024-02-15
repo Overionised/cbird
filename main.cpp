@@ -8,6 +8,8 @@
 
 char pipechar = 'p';
 char playerCharacter = 'b';
+int score = 0;
+int highscore = 0;
 bool gravityforce = true;
 bool phaze = false;
 int arsizex = 15;
@@ -42,6 +44,10 @@ void starter(){
     }
     map[5][8] = playerCharacter;
     gameover = false;
+    if (score > highscore){
+        highscore = score;
+    }
+    score = 0;
 }
 void ending(){
     std::cout << "\033[33m";
@@ -87,7 +93,10 @@ void findXPosition() {
 }
 
 void render() {
+    system("clear");
     findXPosition();
+    std::cout<<"your highscore is : "<< highscore <<std::endl;
+    std::cout<<"your score is : "<< score <<std::endl;
         for (int i = 0; i < arsizex; i++) {
             for (int j = 0; j < arsizey; j++) {
                 if (map[i][j] == playerCharacter || map[i][j] == pipechar){
@@ -136,7 +145,6 @@ void jump() {
         map[playerX][playerY] = ' ';
         map[i][playerY] = playerCharacter;
         playerX = i;
-        system("clear");
         render();
         usleep(100000);
     }
@@ -157,14 +165,12 @@ char getKeyPress() {
 
 void gravity() {
     std::lock_guard<std::mutex> lock(playerMutex);
-    system("clear");
     render();
     if (gravityforce) {
         if (map[playerX + 1][playerY] == ' ') {
             map[playerX][playerY] = ' ';
             playerX += 1;
             map[playerX][playerY] = playerCharacter;
-            system("clear");
             render();
             usleep(050000); // Adjust the sleep time as needed
         }
@@ -185,13 +191,14 @@ void pipe_generator() {
             map[j][i] = ' ';
         }
     }
+    score++;
 }
 void pipe_pusher() {
     for (int i = 0; i < arsizex; i++) {
         for (int j = 0; j < arsizey; j++) {
             if (map[i][j] == pipechar) {
                 map[i][j] = ' ';
-                if (map[i][j - 1] == 'b'){
+                if (map[i][j - 1] == playerCharacter){
                     gameover = 1;
                 }
                 else{
@@ -221,7 +228,6 @@ void inputThread() {
                 jump();
             }
         }
-        system("clear");
         render();
     }
 }
