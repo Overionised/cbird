@@ -1,7 +1,0 @@
-/home/ion/projects/flappy-bird/build/CMakeFiles/flappy-bird.dir
-/home/ion/projects/flappy-bird/build/CMakeFiles/edit_cache.dir
-/home/ion/projects/flappy-bird/build/CMakeFiles/rebuild_cache.dir
-/home/ion/projects/flappy-bird/build/CMakeFiles/list_install_components.dir
-/home/ion/projects/flappy-bird/build/CMakeFiles/install.dir
-/home/ion/projects/flappy-bird/build/CMakeFiles/install/local.dir
-/home/ion/projects/flappy-bird/build/CMakeFiles/install/strip.dir

@@ -6,8 +6,8 @@
 #include <thread>
 #include <mutex>
 
-char pipechar = 'p';
-char playerCharacter = 'b';
+char pipechar = '#';
+char playerCharacter = 'o';
 int score = 0;
 int highscore = 0;
 bool gravityforce = true;
@@ -18,66 +18,53 @@ int playerX, playerY;
 bool gameover;
 char map[15][25];
 char art[15][25]{
-    {' ', '=', '=', ' ', '=', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, //00
-    {'=', '=', '=', '=', '=', '=', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, //01
-    {'=', '=', '=', '=', '=', '=', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '=', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '=', '='}, //02
-    {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '=', '=', '=', '=', ' ', ' ', ' ', ' ', ' ', '=', '=', '='}, //03
-    {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '=', '=', '=', '=', ' ', ' ', ' ', ' ', ' ', ' ', '='}, //04
-    {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, //05
-    {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, //06
-    {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, //07
-    {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '.', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, //08
-    {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '.', '.', '.', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, //09
-    {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '-', '-', ' ', '-', '-', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, //10
-    {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '/', ' ', ' ', '.', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, //11
-    {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '-', '-', ' ', '_', '_', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, //12
-    {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|', '|', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, //13
-    {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|', '|', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, //14
+        {' ', '=', '=', ' ', '=', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, //00
+        {'=', '=', '=', '=', '=', '=', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, //01
+        {'=', '=', '=', '=', '=', '=', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '=', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '=', '='}, //02
+        {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '=', '=', '=', '=', ' ', ' ', ' ', ' ', ' ', '=', '=', '='}, //03
+        {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '=', '=', '=', '=', ' ', ' ', ' ', ' ', ' ', ' ', '='}, //04
+        {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, //05
+        {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, //06
+        {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, //07
+        {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '.', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, //08
+        {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '.', '.', '.', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, //09
+        {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '-', '-', ' ', '-', '-', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, //10
+        {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '/', ' ', ' ', '.', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, //11
+        {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '-', '-', ' ', '_', '_', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, //12
+        {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|', '|', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, //13
+        {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|', '|', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, //14
 }; //nothing
 
-std::mutex playerMutex;
-void starter(){
-    for (int i = 0; i < arsizex; i++) {
-        for (int j = 0; j < arsizey; j++){
-            map[i][j] = ' ';
-        }
-    }
-    map[5][8] = playerCharacter;
-    gameover = false;
-    if (score > highscore){
-        highscore = score;
-    }
-    score = 0;
-}
+
 void ending(){
     std::cout << "\033[33m";
     std::cout <<
-        "     .aMMMMP .aMMMb  dMMMMMMMMb dMMMMMP        .aMMMb  dMP dMP dMMMMMP dMMMMb \n"
-        "    dMP\"    dMP\"dMP dMP\"dMP\"dMPdMP            dMP\"dMP dMP dMP dMP     dMP.dMP \n"
-        "   dMP MMP\"dMMMMMP dMP dMP dMPdMMMP          dMP dMP dMP dMP dMMMP   dMMMMK\"  \n"
-        "  dMP.dMP dMP dMP dMP dMP dMPdMP            dMP.aMP  YMvAP\" dMP     dMP\"AMF   \n"
-        "  VMMMP\" dMP dMP dMP dMP dMPdMMMMMP         VMMMP\"    VP\"  dMMMMMP dMP dMP    \n";
+              "     .aMMMMP .aMMMb  dMMMMMMMMb dMMMMMP        .aMMMb  dMP dMP dMMMMMP dMMMMb \n"
+              "    dMP\"    dMP\"dMP dMP\"dMP\"dMPdMP            dMP\"dMP dMP dMP dMP     dMP.dMP \n"
+              "   dMP MMP\"dMMMMMP dMP dMP dMPdMMMP          dMP dMP dMP dMP dMMMP   dMMMMK\"  \n"
+              "  dMP.dMP dMP dMP dMP dMP dMPdMP            dMP.aMP  YMvAP\" dMP     dMP\"AMF   \n"
+              "  VMMMP\" dMP dMP dMP dMP dMPdMMMMMP         VMMMP\"    VP\"  dMMMMMP dMP dMP    \n";
     std::cout << "\033[0m";
 }
 void start(){
     std::cout << "\033[33m"; // ANSI escape code for yellow color
     std::cout <<
-        "    ____                         ______         _____ __             __ \n"
-        "   / __ \\________  __________   /_  __/___     / ___// /_____ ______/ /_\n"
-        "  / /_/ / ___/ _ \\/ ___/ ___/    / / / __ \\    \\__ \\/ __/ __ `/ ___/ __/\n"
-        " / ____/ /  /  __(__  |__  )    / / / /_/ /   ___/ / /_/ /_/ / /  / /_  \n"
-        "/_/   /_/   \\___/____/____/    /_/  \\____/   /____/\\__/\\__,_/_/   \\__/  \n";
+              "    ____                         ______         _____ __             __ \n"
+              "   / __ \\________  __________   /_  __/___     / ___// /_____ ______/ /_\n"
+              "  / /_/ / ___/ _ \\/ ___/ ___/    / / / __ \\    \\__ \\/ __/ __ `/ ___/ __/\n"
+              " / ____/ /  /  __(__  |__  )    / / / /_/ /   ___/ / /_/ /_/ / /  / /_  \n"
+              "/_/   /_/   \\___/____/____/    /_/  \\____/   /____/\\__/\\__,_/_/   \\__/  \n";
     std::cout << "\033[0m";
 }
 void goagain(){
     std::cout << "\033[33m"; // ANSI escape code for yellow color
     std::cout <<
-        "   ______         ___               _     ___ \n"
-        "  / ____/___     /   | ____ _____ _(_)___/__ \\\n"
-        " / / __/ __ \\   / /| |/ __ `/ __ `/ / __ \\/ _/\n"
-        "/ /_/ / /_/ /  / ___ / /_/ / /_/ / / / / /_/  \n"
-        "\\____/\\____/  /_/  |_\\__, /\\__,_/_/_/ /_(_)   \n"
-        "                    /____/         y/n           \n";
+              "   ______         ___               _     ___ \n"
+              "  / ____/___     /   | ____ _____ _(_)___/__ \\\n"
+              " / / __/ __ \\   / /| |/ __ `/ __ `/ / __ \\/ _/\n"
+              "/ /_/ / /_/ /  / ___ / /_/ / /_/ / / / / /_/  \n"
+              "\\____/\\____/  /_/  |_\\__, /\\__,_/_/_/ /_(_)   \n"
+              "                    /____/         y/n           \n";
     std::cout << "\033[0m";
 }
 void findXPosition() {
@@ -95,29 +82,29 @@ void findXPosition() {
 void render() {
     system("clear");
     findXPosition();
-    std::cout<<"your highscore is : "<< highscore <<std::endl;
+    std::cout<<"your high-score is : "<< highscore <<std::endl;
     std::cout<<"your score is : "<< score <<std::endl;
-        for (int i = 0; i < arsizex; i++) {
-            for (int j = 0; j < arsizey; j++) {
-                if (map[i][j] == playerCharacter || map[i][j] == pipechar){
+    for (int i = 0; i < arsizex; i++) {
+        for (int j = 0; j < arsizey; j++) {
+            if (map[i][j] == playerCharacter || map[i][j] == pipechar){
 
-                    if (map[i][j]==pipechar){
-                        std::cout<<"\e[1;94m";
-                        std::cout << map[i][j];
+                if (map[i][j]==pipechar){
+                    std::cout<<"\e[1;94m";
+                    std::cout << map[i][j];
 
-                    }
-                    else if (map[i][j]== playerCharacter){
-                        std::cout<<"\e[1;93m";
-                        std::cout << map[i][j];
-                    }
                 }
-                else{
-                    std::cout <<"\e[0;36m";
-                    std::cout << art[i][j];
+                else if (map[i][j]== playerCharacter){
+                    std::cout<<"\e[1;93m";
+                    std::cout << map[i][j];
                 }
             }
-        std::cout << std::endl;
+            else{
+                std::cout <<"\e[0;36m";
+                std::cout << art[i][j];
+            }
         }
+        std::cout << std::endl;
+    }
 }
 
 void jump() {
@@ -145,7 +132,6 @@ void jump() {
         map[playerX][playerY] = ' ';
         map[i][playerY] = playerCharacter;
         playerX = i;
-        render();
         usleep(100000);
     }
     gravityforce = true;
@@ -163,15 +149,29 @@ char getKeyPress() {
     return ch;
 }
 
+std::mutex playerMutex;
+void starter(){
+    for (int i = 0; i < arsizex; i++) {
+        for (int j = 0; j < arsizey; j++){
+            map[i][j] = ' ';
+        }
+    }
+    map[5][8] = playerCharacter;
+    findXPosition();
+    gameover = false;
+    if (score > highscore){
+        highscore = score;
+    }
+    score = 0;
+}
+
 void gravity() {
     std::lock_guard<std::mutex> lock(playerMutex);
-    render();
     if (gravityforce) {
         if (map[playerX + 1][playerY] == ' ') {
             map[playerX][playerY] = ' ';
             playerX += 1;
             map[playerX][playerY] = playerCharacter;
-            render();
             usleep(050000); // Adjust the sleep time as needed
         }
     }
@@ -228,7 +228,6 @@ void inputThread() {
                 jump();
             }
         }
-        render();
     }
 }
 
@@ -242,7 +241,12 @@ void pushThread() {
         }
     }
 }
-
+void renderThread(){
+    while (!gameover){
+        render();
+        usleep(10000);
+    }
+}
 int main() {
     bool NGpLoop = true;
     char loopkey;
@@ -254,13 +258,17 @@ int main() {
     while (NGpLoop){
         starter();
 
+        std::thread renderThreadObj(renderThread);
         std::thread inputThreadObj(inputThread);
         std::thread gravityThreadObj(gravityThread);
         std::thread pushTgreadObj(pushThread);
 
-        inputThreadObj.join();
+
+
         gravityThreadObj.join();
         pushTgreadObj.join();
+        renderThreadObj.join();
+        inputThreadObj.join();
 
         system("clear");
         ending();

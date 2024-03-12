@@ -1,8 +1,0 @@
-[
-{
-  "directory": "/home/ion/projects/flappy-bird/build",
-  "command": "/usr/bin/c++ -g -o CMakeFiles/flappy-bird.dir/main.cpp.o -c /home/ion/projects/flappy-bird/main.cpp",
-  "file": "/home/ion/projects/flappy-bird/main.cpp",
-  "output": "CMakeFiles/flappy-bird.dir/main.cpp.o"
-}
-]
